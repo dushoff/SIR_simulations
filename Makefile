@@ -20,8 +20,11 @@ autopipeR = defined
 ## burnout.plots.Rout: burnout.R
 ## newPlots.plots.Rout: newPlots.R
 
-%.sim.Rout: %.R simulate.rda deSolve.R
-	$(pipeR)
+## finalSize.R uses uniroot to solve final size equation; might be clunky though
+## finalSize.Rout: finalSize.R
+
+%.sim.Rout: %.R simulate.rda finalSize.rda deSolve.R
+	$(pipeRcall)
 
 ######################################################################
 
@@ -53,7 +56,11 @@ Sources += content.mk
 ## Now try to do detailed sims that can be used for calculating means and variances of Rc. Forward version of Roswell-Weitz attack
 
 ## forward.sim.Rout: forward.R forward.md
+conjecture.Rout: conjecture.R forward.sim.rda deSolve.R
+	$(pipeRcall)
 
+plotCohorts.Rout: plotCohorts.R forward.sim.rda deSolve.R
+	$(pipeRcall)
 ### Makestuff
 
 Sources += Makefile
