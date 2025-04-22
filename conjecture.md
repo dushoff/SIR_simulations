@@ -5,7 +5,7 @@ We have also been looking at variation in the number of cases per case. Followin
 
 The law of total variance means that we can separate the variance in R_c into an expectation component and a Poisson component. We tend to think about this using the formalism V = κμ² + μ, where κ is the squared coefficient of variation of the expectation (equivalent to the reciprocal of a gamma or negative-binomial shape parameter, in those special cases). In the particular case of averaging over a whole epidemic, μ=1 and V=κ+1.
 
-Roswell observed in some simple, strictly SIR-based individual-based models that the variance in R_c seemed always to be close to 2 (corresponding to κ=1), and conjectured that something was going on.
+UMD post-doc Michael Roswell observed in some simple, strictly SIR-based individual-based models that the variance in R_c seemed always to be close to 2 (corresponding to κ=1), and conjectured that something was going on.
 
 We have now done some simple deterministic simulations, with kind of crude numerics (there are some issues), and it looks like this pattern holds up way better than you might expect, even as the variance inside the expectation shifts quite sharply, see below. We don't yet feel we know whether the strong conjecture (κ=1) is true, but it definitely seems like there is something going on that needs a better explanation than we have.
 

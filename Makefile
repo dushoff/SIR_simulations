@@ -59,6 +59,9 @@ Sources += content.mk
 conjecture.Rout: conjecture.R forward.sim.rda deSolve.R
 	$(pipeRcall)
 
+## There is no rule here, I sent a link to github!
+## conjecture.html: conjecture.md
+
 plotCohorts.Rout: plotCohorts.R forward.sim.rda deSolve.R
 	$(pipeRcall)
 
