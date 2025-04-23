@@ -1,4 +1,4 @@
-# This is SIR_simulations
+# This is SIR_simulations; it has outdated stuff for talks, and superseded stuff for the Roswell conjecture. See Roswell's fork of this repo
 
 current: target
 -include target.mk
