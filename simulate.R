@@ -3,11 +3,15 @@ library(shellpipes)
 sir <- function(time, vars, parms){
 	x <- with(as.list(vars), exp(lx))
 	y <- with(as.list(vars), exp(ly))
+	
+	Rx <- with(parms, R0)
+	## Comment this out (proof spinning)
+	Rx <- Rx * x^zeta
 
 	return(with(parms, list(c(
-		lxdot = rho*(1-x)/x - R0*y,
-		lydot = R0*x-1,
-		cumdot = R0*x*y
+		lxdot = rho*(1-x)/x - Rx*y,
+		lydot = Rx*x-1,
+		cumdot = Rx*x*y
 	))))
 }
 

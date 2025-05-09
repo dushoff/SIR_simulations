@@ -43,7 +43,7 @@ Sources += content.mk
 
 ## Working now on simulating _backwards_; can we get things to match?
 ## Goal is to calculating infectious potential distributions for Roswell-Weitz heterogeneity
-## This doesn't work as slick as I had hoped, and needs more math I think to be made to work at all.
+## Backwards trick worked super-cool for simple things, but could not be easily extended to do the job that actually needed to be done
 
 ## revtest.md
 ## revtest.rev.plots.Rout: revtest.R
@@ -51,19 +51,7 @@ Sources += content.mk
 %.rev.sim.Rout: %.R revsim.rda deSolve.R
 	$(pipeR)
 
-######################################################################
-
-## Now try to do detailed sims that can be used for calculating means and variances of Rc. Forward version of Roswell-Weitz attack
-
-## forward.sim.Rout: forward.R forward.md
-conjecture.Rout: conjecture.R forward.sim.rda deSolve.R
-	$(pipeRcall)
-
-## There is no rule here, I sent a link to github!
-## conjecture.html: conjecture.md
-
-plotCohorts.Rout: plotCohorts.R forward.sim.rda deSolve.R
-	$(pipeRcall)
+## Deleting other Roswell conjecture stuff from here so it can be active in the forks.
 
 ######################################################################
 
