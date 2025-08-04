@@ -67,7 +67,6 @@ print(mp_tmb_coef(calibrator, conf.int = TRUE)
 	|> select(-term, -row, -col, -type)
 )
 
-
 ######################################################################
 
 quit()
