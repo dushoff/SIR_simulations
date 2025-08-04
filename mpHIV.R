@@ -1,56 +1,84 @@
-
-## Load the library
+library(shellpipes)
+library(dplyr)
 library(macpan2)
-library(ggplot2); theme_set(theme_bw(base_size=14))
+startGraphics()
 
-## Build a model structure
+sample <- 1000
 
-## default values for quantities required to run simulations
-dPar <- list(
-	  beta = 0.2 
-	, gamma = 0.1 
+## Data
+anc <- (csvRead()
+	|> transmute(
+		time = `...1`
+		, value=sample*prev/100
+		, matrix = "pos"
+	)
 )
 
-initVals <- list(
-	N = 100
-	, I = 1
- )
+## Model structure
+
+initVals <- list(I = 1e-2)
 
 ## flow diagram specification
-## try ?mp_per_capita_flow, and make sure you understand the arguments here
-flows = list(
-	  mp_per_capita_flow("S", "I", "beta * I / N", "infection")
+flows <- list(
+	  mp_per_capita_flow("S", "I", "beta*prev*exp(-alpha*prev)", "infection")
 	, mp_per_capita_outflow("I", "gamma", "death")
 )
+fn <- list(
+	prev ~ I/(S+I)
+	, pos ~ sample*I/(S+I)
+)
 
-initialize_state = list(S ~ N - I)
-
-## model specification
-sirSpec = mp_tmb_model_spec(
-	  before = initialize_state
-	, during = flows
-	, default = dPar
+spec = mp_tmb_model_spec(
+	  before = list(S ~ 1 - I)
+	, during = c(fn, flows)
+	, default = list(
+		  beta = 0.2 
+		, gamma = 0.1 
+		, alpha = 0.5
+		, sample = 1000
+	)
 	, inits = initVals
 )
 
-print(sirSpec)
+######################################################################
+
+simulator = mp_simulator(model = mp_rk4(spec)
+	, time_steps = nrow(anc)
+	, outputs = "pos"
+)
+
+## bnc <- mp_trajectory(simulator, include_initial=TRUE)
 
 ######################################################################
 
-## Simulate 
-time_steps = 100
+calibrator = (spec
+  |> mp_tmb_calibrator(
+        data = anc
+      , traj = list(
+            pos = mp_pois()
+      )
+      , par = c("log_beta", "log_gamma", "alpha")
+  )
+)
+rpt <- mp_optimize(calibrator)
+print(mp_optimizer_output(calibrator)$convergence)
 
-# rk4 will construct steps that more closely match a continuous process
-sirContinuous = mp_simulator(model = mp_rk4(sirSpec)
-	, time_steps = time_steps
-	, outputs = "I"
+print(mp_tmb_coef(calibrator, conf.int = TRUE)
+	|> select(-term, -row, -col, -type)
 )
 
-sirTraj <- mp_trajectory(sirContinuous, include_initial=TRUE)
-print(sirTraj)
 
-print(ggplot(sirTraj)
-	+ aes(time, value, color=matrix)
-	+ geom_line()
+######################################################################
+
+quit()
+
+library(ggplot2); theme_set(theme_bw())
+
+(calibrator
+ |> mp_trajectory_sd(conf.int = TRUE)
+ |> ggplot()
+ + geom_line(aes(time, value), colour = "red")
+ + geom_ribbon(aes(time, ymin = conf.low, ymax = conf.high), alpha = 0.2, fill = "red")
+ + geom_line(aes(time, value), data = anc)
 )
 
