@@ -2,6 +2,7 @@ library(shellpipes)
 library(dplyr)
 library(macpan2)
 startGraphics()
+rpcall("mpHIV.Rout mpHIV.pipestar mpHIV.R za.csv nserc.md")
 
 sample <- 1000
 
