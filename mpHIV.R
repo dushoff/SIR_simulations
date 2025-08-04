@@ -14,11 +14,8 @@ anc <- (csvRead()
 	)
 )
 
-## Model structure
-
-initVals <- list(I = 1e-2)
-
 ## flow diagram specification
+initVals <- list(I = 1e-2)
 flows <- list(
 	  mp_per_capita_flow("S", "I", "beta*prev*exp(-alpha*prev)", "infection")
 	, mp_per_capita_outflow("I", "gamma", "death")
@@ -34,8 +31,8 @@ spec = mp_tmb_model_spec(
 	, default = list(
 		  beta = 0.2 
 		, gamma = 0.1 
-		, alpha = 0.5
-		, sample = 1000
+		, alpha = 0
+		, sample = sample
 	)
 	, inits = initVals
 )
@@ -47,11 +44,27 @@ simulator = mp_simulator(model = mp_rk4(spec)
 	, outputs = "pos"
 )
 
-## bnc <- mp_trajectory(simulator, include_initial=TRUE)
-
 ######################################################################
 
-calibrator = (spec
+nohetCal = (spec
+  |> mp_tmb_calibrator(
+        data = anc
+      , traj = list(
+            pos = mp_pois()
+      )
+      , par = c("log_beta", "log_gamma")
+  )
+)
+
+mp_optimize(nohetCal)
+print(mp_optimizer_output(nohetCal)$convergence)
+
+print(mp_tmb_coef(nohetCal, conf.int = TRUE)
+	|> select(-term, -row, -col, -type)
+)
+
+hetCal = (spec
+  |> mp_tmb_update(default = list(alpha=0.5))
   |> mp_tmb_calibrator(
         data = anc
       , traj = list(
@@ -60,24 +73,26 @@ calibrator = (spec
       , par = c("log_beta", "log_gamma", "alpha")
   )
 )
-rpt <- mp_optimize(calibrator)
-print(mp_optimizer_output(calibrator)$convergence)
+rpt <- mp_optimize(hetCal)
+print(mp_optimizer_output(hetCal)$convergence)
 
-print(mp_tmb_coef(calibrator, conf.int = TRUE)
+print(mp_tmb_coef(hetCal, conf.int = TRUE)
 	|> select(-term, -row, -col, -type)
 )
 
-######################################################################
-
-quit()
-
 library(ggplot2); theme_set(theme_bw())
 
-(calibrator
- |> mp_trajectory_sd(conf.int = TRUE)
- |> ggplot()
- + geom_line(aes(time, value), colour = "red")
- + geom_ribbon(aes(time, ymin = conf.low, ymax = conf.high), alpha = 0.2, fill = "red")
- + geom_line(aes(time, value), data = anc)
+calPlot <- (ggplot()
+	+ geom_line(aes(time, value), colour = "red")
+	+ geom_ribbon(aes(time, ymin = conf.low, ymax = conf.high)
+		, alpha = 0.2, fill = "red")
+	+ geom_line(aes(time, value), data = anc)
 )
 
+print(calPlot %+% (nohetCal |> mp_trajectory_sd(conf.int = TRUE))
+	+ ggtitle("No heterogeneity")
+)
+
+print(calPlot %+% (hetCal |> mp_trajectory_sd(conf.int = TRUE))
+	+ ggtitle("Simple heterogeneity")
+)
