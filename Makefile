@@ -10,6 +10,12 @@ vim_session:
 
 ######################################################################
 
+## Now building some macpan fitting here for NSERC, because it is where I have the HIV prevalence data?
+
+mpHIV.Rout: mpHIV.R za.csv
+
+######################################################################
+
 Sources += $(wildcard *.md)
 
 Sources += $(wildcard *.R *.csv)
