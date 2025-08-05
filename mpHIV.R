@@ -19,7 +19,7 @@ anc <- (csvRead()
 ## flow diagram specification
 flows <- list(
 	mp_per_capita_flow("S", "I"
-		, "beta*prev * exp(-alpha*prev) * (1-prev)^(-k)", "infection"
+		, "rho*gamma*prev * exp(-alpha*prev) * (1-prev)^k", "infection"
 	)
 	, mp_per_capita_outflow("I", "gamma", "death")
 )
@@ -33,7 +33,7 @@ spec = mp_tmb_model_spec(
 		I ~ I0, S ~ 1 - I)
 	, during = c(fn, flows)
 	, default = list(
-		  beta = 0.2 
+		  rho = 2 
 		, gamma = 0.1 
 		, alpha = 0
 		, k = 0
@@ -57,7 +57,7 @@ nohetCal = (spec
       , traj = list(
             pos = mp_pois()
       )
-      , par = c("log_beta", "log_gamma", "log_I0")
+      , par = c("log_rho", "log_gamma", "log_I0")
   )
 )
 
@@ -74,7 +74,7 @@ granichCal = (spec
       , traj = list(
             pos = mp_pois()
       )
-      , par = c("log_beta", "log_gamma", "alpha", "log_I0")
+      , par = c("log_rho", "log_gamma", "alpha", "log_I0")
   )
 )
 mp_optimize(granichCal)
@@ -89,7 +89,7 @@ zhaoCal = (spec
       , traj = list(
             pos = mp_pois()
       )
-      , par = c("log_beta", "log_gamma", "k", "log_I0")
+      , par = c("log_rho", "log_gamma", "k", "log_I0")
   )
 )
 mp_optimize(zhaoCal)
