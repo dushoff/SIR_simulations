@@ -19,7 +19,7 @@ anc <- (csvRead()
 ## flow diagram specification
 flows <- list(
 	mp_per_capita_flow("S", "I"
-		, "beta*prev*exp(-alpha*prev)*prev^(-k)", "infection"
+		, "beta*prev * exp(-alpha*prev) * (1-prev)^(-k)", "infection"
 	)
 	, mp_per_capita_outflow("I", "gamma", "death")
 )
