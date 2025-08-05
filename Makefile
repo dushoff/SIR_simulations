@@ -12,8 +12,10 @@ vim_session:
 
 ## Now building some macpan fitting here for NSERC, because it is where I have the HIV prevalence data?
 
-## Build from scratch, or use the prepackaged Granich?
+## Going with very simple model for now 2025 Aug 05 (Tue)
 mpHIV.Rout: mpHIV.R za.csv nserc.md
+mpHIVplots.Rout: mpHIVplots.R mpHIV.rda
+	$(pipeRcall)
 
 ## The prepackaged version has treatment, which we don't want for our simple example.
 granich.Rout: granich.R

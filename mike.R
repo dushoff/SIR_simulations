@@ -1,3 +1,5 @@
+
+
 library(shellpipes)
 library(dplyr)
 library(macpan2)
@@ -5,7 +7,7 @@ startGraphics()
 rpcall("mpHIV.Rout mpHIV.pipestar mpHIV.R za.csv nserc.md")
 
 sample <- 1000
-I0 <- 1e-2
+I_init = 1e-2
 
 ## Data
 anc <- (csvRead()
@@ -17,10 +19,9 @@ anc <- (csvRead()
 )
 
 ## flow diagram specification
+initVals <- list(I_init = 1e-2)
 flows <- list(
-	mp_per_capita_flow("S", "I"
-		, "beta*prev*exp(-alpha*prev)*prev^(-k)", "infection"
-	)
+	  mp_per_capita_flow("S", "I", "beta*prev*exp(-alpha*prev)", "infection")
 	, mp_per_capita_outflow("I", "gamma", "death")
 )
 fn <- list(
@@ -29,17 +30,17 @@ fn <- list(
 )
 
 spec = mp_tmb_model_spec(
-	before = list(
-		I ~ I0, S ~ 1 - I)
+	  before = list(I ~ I_init
+	  	, S ~ 1 - I)
 	, during = c(fn, flows)
 	, default = list(
 		  beta = 0.2 
 		, gamma = 0.1 
 		, alpha = 0
-		, k = 0
 		, sample = sample
-		, I0 = I0
+		, I_init = I_init
 	)
+#	, inits = initVals
 )
 
 ######################################################################
@@ -57,45 +58,48 @@ nohetCal = (spec
       , traj = list(
             pos = mp_pois()
       )
-      , par = c("log_beta", "log_gamma", "log_I0")
+      , par = c("log_beta", "log_gamma")
   )
 )
 
 mp_optimize(nohetCal)
-stopifnot(mp_optimizer_output(nohetCal)$convergence==0)
+print(mp_optimizer_output(nohetCal)$convergence)
+
 print(mp_tmb_coef(nohetCal, conf.int = TRUE)
 	|> select(-term, -row, -col, -type)
 )
 
-granichCal = (spec
+hetCal = (spec
   |> mp_tmb_update(default = list(alpha=0.5))
   |> mp_tmb_calibrator(
         data = anc
       , traj = list(
             pos = mp_pois()
       )
-      , par = c("log_beta", "log_gamma", "alpha", "log_I0")
+      , par = c("log_beta", "log_gamma", "alpha", "log_I_init")
   )
 )
-mp_optimize(granichCal)
-stopifnot(mp_optimizer_output(granichCal)$convergence==0)
-print(mp_tmb_coef(granichCal, conf.int = TRUE)
+rpt <- mp_optimize(hetCal)
+print(mp_optimizer_output(hetCal)$convergence)
+
+print(mp_tmb_coef(hetCal, conf.int = TRUE)
 	|> select(-term, -row, -col, -type)
 )
 
-zhaoCal = (spec
-  |> mp_tmb_calibrator(
-        data = anc
-      , traj = list(
-            pos = mp_pois()
-      )
-      , par = c("log_beta", "log_gamma", "k", "log_I0")
-  )
-)
-mp_optimize(zhaoCal)
-stopifnot(mp_optimizer_output(zhaoCal)$convergence==0)
-print(mp_tmb_coef(zhaoCal, conf.int = TRUE)
-	|> select(-term, -row, -col, -type)
+library(ggplot2); theme_set(theme_bw())
+
+calPlot <- (ggplot()
+	+ geom_line(aes(time, value), colour = "red")
+	+ geom_ribbon(aes(time, ymin = conf.low, ymax = conf.high)
+		, alpha = 0.2, fill = "red")
+	+ geom_line(aes(time, value), data = anc)
 )
 
-saveEnvironment()
+print(calPlot %+% (nohetCal |> mp_trajectory_sd(conf.int = TRUE))
+	+ ggtitle("No heterogeneity")
+)
+
+print(calPlot %+% (hetCal |> mp_trajectory_sd(conf.int = TRUE))
+	+ ggtitle("Simple heterogeneity")
+)
+
