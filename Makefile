@@ -12,6 +12,8 @@ vim_session:
 
 ## Now building some macpan fitting here for NSERC, because it is where I have the HIV prevalence data?
 
+Ignore += .macpan
+
 ## Going with very simple model for now 2025 Aug 05 (Tue)
 mpHIV.Rout: mpHIV.R za.csv nserc.md
 mpHIVplots.Rout: mpHIVplots.R mpHIV.rda
