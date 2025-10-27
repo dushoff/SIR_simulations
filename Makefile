@@ -17,6 +17,9 @@ mpHIV.Rout: mpHIV.R za.csv nserc.md
 mpHIVplots.Rout: mpHIVplots.R mpHIV.rda
 	$(pipeRcall)
 
+## mpHIVplots.pitch.pdf: mpHIVplots.R
+mpHIVplots.pitch.pdf: mpHIVplots.Rout ;
+
 ## The prepackaged version has treatment, which we don't want for our simple example.
 granich.Rout: granich.R
 

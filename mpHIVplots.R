@@ -21,14 +21,31 @@ calPlot <- (datPlot
 
 print(datPlot)
 
-print(calPlot %+% (nohetCal |> mp_trajectory_sd(conf.int = TRUE))
+nohetFit <- nohetCal |> mp_trajectory_sd(conf.int = TRUE)
+granichFit <- granichCal |> mp_trajectory_sd(conf.int = TRUE)
+zhaoFit <- zhaoCal |> mp_trajectory_sd(conf.int = TRUE)
+
+print(calPlot %+% nohetFit
 	+ ggtitle("No heterogeneity")
 )
 
-print(calPlot %+% (granichCal |> mp_trajectory_sd(conf.int = TRUE))
+print(calPlot %+% granichFit
 	+ ggtitle("Granich heterogeneity")
 )
 
-print(calPlot %+% (zhaoCal |> mp_trajectory_sd(conf.int = TRUE))
+print(calPlot %+% zhaoFit
 	+ ggtitle("Zhao heterogeneity")
 )
+
+startGraphics(desc="pitch", width=3, height=4)
+
+print(calPlot
+	%+% zhaoFit
+	+ geom_line(aes(time, value/sample), colour = "red", data=nohetFit)
+	+ geom_ribbon(
+		aes(time , ymin = conf.low/sample, ymax = conf.high/sample)
+		, alpha = 0.2, fill = "blue"
+		, data = nohetFit
+	)
+)
+
