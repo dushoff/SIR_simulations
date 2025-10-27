@@ -19,6 +19,7 @@ mpHIV.Rout: mpHIV.R za.csv nserc.md
 mpHIVplots.Rout: mpHIVplots.R mpHIV.rda
 	$(pipeRcall)
 
+Ignore += mpHIVplots.pitch.pdf
 ## mpHIVplots.pitch.pdf: mpHIVplots.R
 mpHIVplots.pitch.pdf: mpHIVplots.Rout ;
 
