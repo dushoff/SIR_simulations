@@ -41,6 +41,7 @@ autopipeR = defined
 ## finalSize.R uses uniroot to solve final size equation; might be clunky though
 ## finalSize.Rout: finalSize.R
 
+impmakeR += sim
 %.sim.Rout: %.R simulate.rda finalSize.rda deSolve.R
 	$(pipeRcall)
 

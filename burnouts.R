@@ -1,4 +1,5 @@
 library(shellpipes)
+rpcall("burnouts.sim.Rout burnouts.R simulate.rda finalSize.rda deSolve.R")
 
 sourceFiles()
 loadEnvironments()

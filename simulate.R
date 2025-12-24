@@ -4,9 +4,7 @@ sir <- function(time, vars, parms){
 	x <- with(as.list(vars), exp(lx))
 	y <- with(as.list(vars), exp(ly))
 	
-	Rx <- with(parms, R0)
-	## Comment this out (proof spinning)
-	Rx <- Rx * x^zeta
+	Rx <- with(parms, R0 * x^zeta)
 
 	return(with(parms, list(c(
 		lxdot = rho*(1-x)/x - Rx*y,
@@ -15,13 +13,13 @@ sir <- function(time, vars, parms){
 	))))
 }
 
-sim <- function(x0=NULL, y0=0.001, R0=5, rho=0.01, finTime=20, timeStep=0.1, dfun=sir){
+sim <- function(x0=NULL, y0=0.001, R0=5, rho=0.01, zeta=1, finTime=20, timeStep=0.1, dfun=sir){
 	if(is.null(x0)){x0 <- 1-y0}
 	sim <- as.data.frame(ode(
 		y=c(lx=log(x0), ly=log(y0), cum=0),
 		func=dfun,
 		times=seq(from=0, to=finTime, by=timeStep),
-		parms=list(R0=R0, rho=rho)
+		parms=list(R0=R0, rho=rho, zeta=zeta)
 	))
 
 	return(within(sim, {
