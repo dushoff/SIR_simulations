@@ -80,10 +80,14 @@ Sources += Makefile
 
 Ignore += makestuff
 msrepo = https://github.com/dushoff
-Makefile: makestuff/Makefile
-makestuff/Makefile:
-	git clone $(msrepo)/makestuff
-	ls $@
+
+Makefile: makestuff/00.stamp
+makestuff/%.stamp: | makestuff
+	- $(RM) makestuff/*.stamp
+	cd makestuff && $(MAKE) pull
+	touch $@
+makestuff:
+	git clone --depth 1 $(msrepo)/makestuff
 
 -include makestuff/os.mk
 -include makestuff/pipeR.mk
