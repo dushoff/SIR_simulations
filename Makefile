@@ -55,6 +55,11 @@ Sources += content.mk
 
 ## See notes in content.mk, and also rule for newplots
 
+## recurrent.plots.Rout: recurrent.R plots.R
+
+%.hastyplots.Rout: hastyplots.R %.sim.rda
+	$(pipeR)
+
 %.plots.Rout: plots.R %.sim.rda
 	$(pipeR)
 
