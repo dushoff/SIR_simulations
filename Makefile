@@ -36,6 +36,7 @@ autopipeR = defined
 
 ## simulate.R has functions for simulating a simple epidemic
 ## burnout.plots.Rout: burnout.R
+## burnouts.plots.Rout: burnouts.R
 ## newPlots.plots.Rout: newPlots.R
 
 ## finalSize.R uses uniroot to solve final size equation; might be clunky though
