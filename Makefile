@@ -39,12 +39,16 @@ autopipeR = defined
 ## burnouts.plots.Rout: burnouts.R
 ## newPlots.plots.Rout: newPlots.R
 
+## 2026 accidentally circulated a heterogeneous burnout picture
+## hetBurn.plots.Rout: hetBurn.R
+## fastBurn.plots.Rout: fastBurn.R
+
 ## finalSize.R uses uniroot to solve final size equation; might be clunky though
 ## finalSize.Rout: finalSize.R
 
 impmakeR += sim
 %.sim.Rout: %.R simulate.rda finalSize.rda deSolve.R
-	$(pipeRcall)
+	$(pipeR)
 
 ######################################################################
 
