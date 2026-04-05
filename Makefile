@@ -6,7 +6,7 @@ current: target
 # include makestuff/perl.def
 
 vim_session:
-	bash -cl "vmt README.md notes.md"
+	bash -ic "vmt README.md notes.md"
 
 ######################################################################
 
