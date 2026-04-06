@@ -1,4 +1,5 @@
 library(shellpipes)
+rpcall("newPlots.sim.Rout newPlots.R simulate.rda finalSize.rda deSolve.R")
 
 sourceFiles()
 loadEnvironments()

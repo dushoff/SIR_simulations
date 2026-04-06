@@ -12,10 +12,16 @@ vim_session:
 
 ## Now building some macpan fitting here for NSERC, because it is where I have the HIV prevalence data?
 
+Ignore += .macpan
+
 ## Going with very simple model for now 2025 Aug 05 (Tue)
 mpHIV.Rout: mpHIV.R za.csv nserc.md
 mpHIVplots.Rout: mpHIVplots.R mpHIV.rda
 	$(pipeRcall)
+
+Ignore += mpHIVplots.pitch.pdf
+## mpHIVplots.pitch.pdf: mpHIVplots.R
+mpHIVplots.pitch.pdf: mpHIVplots.Rout ;
 
 ## The prepackaged version has treatment, which we don't want for our simple example.
 granich.Rout: granich.R
@@ -30,13 +36,19 @@ autopipeR = defined
 
 ## simulate.R has functions for simulating a simple epidemic
 ## burnout.plots.Rout: burnout.R
+## burnouts.plots.Rout: burnouts.R
 ## newPlots.plots.Rout: newPlots.R
+
+## 2026 accidentally circulated a heterogeneous burnout picture
+## hetBurn.plots.Rout: hetBurn.R
+## fastBurn.plots.Rout: fastBurn.R
 
 ## finalSize.R uses uniroot to solve final size equation; might be clunky though
 ## finalSize.Rout: finalSize.R
 
+impmakeR += sim
 %.sim.Rout: %.R simulate.rda finalSize.rda deSolve.R
-	$(pipeRcall)
+	$(pipeR)
 
 ######################################################################
 
@@ -47,6 +59,11 @@ Sources += content.mk
 ######################################################################
 
 ## See notes in content.mk, and also rule for newplots
+
+## recurrent.plots.Rout: recurrent.R plots.R
+
+%.hastyplots.Rout: hastyplots.R %.sim.rda
+	$(pipeR)
 
 %.plots.Rout: plots.R %.sim.rda
 	$(pipeR)
@@ -73,10 +90,14 @@ Sources += Makefile
 
 Ignore += makestuff
 msrepo = https://github.com/dushoff
-Makefile: makestuff/Makefile
-makestuff/Makefile:
-	git clone $(msrepo)/makestuff
-	ls $@
+
+Makefile: makestuff/00.stamp
+makestuff/%.stamp: | makestuff
+	- $(RM) makestuff/*.stamp
+	cd makestuff && $(MAKE) pull
+	touch $@
+makestuff:
+	git clone --depth 1 $(msrepo)/makestuff
 
 -include makestuff/os.mk
 -include makestuff/pipeR.mk
