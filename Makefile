@@ -56,6 +56,10 @@ impmakeR += sim
 
 Sources += content.mk
 
+## Rescue it to here.
+hiv_plot.Rout: hiv_plot.R za.csv hiv_sim.rda
+hiv_sim.Rout: hiv_sim.R simulate.rda
+
 ######################################################################
 
 ## See notes in content.mk, and also rule for newplots

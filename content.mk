@@ -2,8 +2,6 @@
 fitSim.Rout: simulate.rda
 longPlot.Rout: fitSim.Rout
 
-hiv_sim.Rout: simulate.rda
-hiv_plot.Rout: za.csv hiv_sim.rda
 hiv_generations.Rout: za.csv hiv_sim.rda hiv_generations.R
 
 ##

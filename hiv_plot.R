@@ -1,9 +1,12 @@
+library(shellpipes)
+loadEnvironments()
+
 cx <- 1.7
 par(cex=cx, cex.axis=1.2, cex.lab=cx, mar = c(5,6,4,1.5))
 
 genTime <- 10
 
-prev <- read.csv(input_files[[1]])
+prev <- csvRead()
 baseYear <- prev$year[[1]]
 
 for (i in 0:length(R0)){
