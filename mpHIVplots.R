@@ -57,15 +57,18 @@ print(calPlot %+% zhaoFit
 	+ ggtitle("Zhao heterogeneity")
 )
 
-startGraphics(desc="pitch", width=3, height=4)
+## Sized for one panel of a 7-inch-wide figure; don't rescale in LaTeX
+startGraphics(desc="pitch", width=1.5, height=2.4)
 
 print(calPlot
 	%+% zhaoFit
-	+ geom_line(aes(year, value/sample), colour = "red", data=nohetFit)
+	+ geom_line(aes(year, value/sample), colour = "blue", data=nohetFit)
 	+ geom_ribbon(
 		aes(year , ymin = conf.low/sample, ymax = conf.high/sample)
 		, alpha = 0.2, fill = "blue"
 		, data = nohetFit
 	)
+	+ xlab("Year")
+	+ theme_bw(base_size=8)
 )
 
